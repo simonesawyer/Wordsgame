@@ -9,6 +9,7 @@ import java.util.stream.Stream;
 public class wordGame {
     final static int ASCIIOFFSET = 97;
     private static Set<String> wordsSet;
+    private static Set<String> badList;
     public static void main(String[]args) {
         Random rand = new Random();
         String guessingLetters = "";
@@ -19,7 +20,7 @@ public class wordGame {
         }catch(Exception e) {
             //  Block of code to handle errors
         }
-
+        System.out.println("This is a three letter word game. With the provided letters you have to \nguess a real word. In order to quite the game type \'q\'. To reroll \nanother choice type 'r'. This program only takes lowercase letters.\n");
         boolean iscorrect = false;
         while(!guess.equals("q")){
             guessingLetters = randomThreeLetters(rand);
@@ -27,8 +28,12 @@ public class wordGame {
             while(!iscorrect){
                 guess = myObj.nextLine();
                 if(guess.equals("q")){
-                  break;
+                  break; 
                 }
+                if(guess.equals("r")){
+                    iscorrect = true;
+                    continue; 
+                  }
                 String temp = guess;
                 if(!temp.contains(guessingLetters.substring(0,1))){
                     System.out.println("Wrong guess "+ guess + " does not contain "+ guessingLetters.substring(0,1));
@@ -62,7 +67,13 @@ public class wordGame {
         guessingLetters += (char)(rand.nextInt(26)+ ASCIIOFFSET);
         guessingLetters += (char)(rand.nextInt(26)+ ASCIIOFFSET);
         guessingLetters += (char)(rand.nextInt(26)+ ASCIIOFFSET);
-
+        while(badList.contains(guessingLetters)){
+            guessingLetters = "";
+            guessingLetters += (char)(rand.nextInt(26)+ ASCIIOFFSET);
+            guessingLetters += (char)(rand.nextInt(26)+ ASCIIOFFSET);
+            guessingLetters += (char)(rand.nextInt(26)+ ASCIIOFFSET);
+        }
+       
         return guessingLetters;
     }
 
@@ -72,14 +83,11 @@ public class wordGame {
     }
     public static void Dictionary() throws IOException
     {
-       /* Path path = Paths.get("words.txt");
-        byte[] readBytes = Files.readAllBytes(path);
-        String wordListContents = new String(readBytes, "UTF-8");
-        String[] words = wordListContents.split("\n");
-        wordsSet = new HashSet<>();
-        Collections.addAll(wordsSet, words);*/
 	      try (Stream<String> lines = Files.lines(Paths.get("words.txt"))) {
 		    wordsSet = lines.collect(Collectors.toSet());
+	      }
+          try (Stream<String> lines = Files.lines(Paths.get("badCombos.txt"))) {
+		    badList = lines.collect(Collectors.toSet());
 	      }
     }
 

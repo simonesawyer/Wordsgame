@@ -62,10 +62,11 @@ int main()
             test = 1;
             break;
         }
-        if(test){
+        if(!test){
             fprintf(fp3,"%s", line2 );
-            test = 0;
+            
         }
+        test = 0;
         rewind(fp1);
 
     }
